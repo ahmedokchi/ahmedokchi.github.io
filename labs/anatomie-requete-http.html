@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anatomie d’une requête HTTP · Nada Shaala</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #000000;
+    --surface: #0B0B0D;
+    --ink: #F4F2F7;
+    --muted: #A29DAB;
+    --line: #26252B;
+    --accent: #A855FF;
+    --ok: #5FE3A5;
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 1.05rem/1.75 "IBM Plex Sans", system-ui, sans-serif;
+    padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+  }
+  ::selection { background: var(--accent); color: #000; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+
+  .back { display: inline-block; margin: 2rem 0 3rem; color: var(--muted); text-decoration: none; font-size: .9rem; transition: color .2s; }
+  .back:hover { color: var(--accent); }
+
+  h1, h2 { font-family: "Chakra Petch", "IBM Plex Sans", sans-serif; font-weight: 600; line-height: 1.15; letter-spacing: -.01em; margin: 0; }
+  h1 { font-size: clamp(2.2rem, 6vw, 3.2rem); }
+  h2 { font-size: 1.5rem; margin: 3.5rem 0 1rem; }
+  h2::after { content: ""; display: block; width: 24px; height: 2px; margin-top: .7rem; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  p { margin: 0 0 1.1rem; }
+
+  /* Fiche d’identité du lab */
+  .infos { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin: 2rem 0 0; padding: 1.25rem 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+  .infos dt { font-family: "JetBrains Mono", monospace; font-size: .72rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .infos dd { margin: .2rem 0 0; font-size: .95rem; }
+
+  /* Blocs de code / requêtes */
+  pre { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 1.1rem 1.25rem; overflow-x: auto; font: .85rem/1.7 "JetBrains Mono", monospace; margin: 0 0 1.5rem; }
+  code { font-family: "JetBrains Mono", monospace; font-size: .88em; background: var(--surface); border: 1px solid var(--line); border-radius: 5px; padding: .1rem .35rem; }
+  pre code { background: none; border: 0; padding: 0; font-size: inherit; }
+  .k { color: var(--accent); }
+  .s { color: var(--ok); }
+
+  /* Captures d’écran */
+  figure { margin: 0 0 1.5rem; }
+  figure img { width: 100%; border-radius: 12px; border: 1px solid var(--line); display: block; }
+  figcaption { font-size: .85rem; color: var(--muted); margin-top: .5rem; }
+  .placeholder { border: 1px dashed var(--line); border-radius: 12px; padding: 3rem 1rem; text-align: center; color: var(--muted); font-size: .9rem; }
+
+  /* Encadré « à retenir » */
+  .note { border-left: 2px solid var(--accent); padding: .25rem 0 .25rem 1.1rem; margin: 0 0 1.5rem; color: var(--muted); }
+  .note strong { color: var(--ink); }
+
+  ul.learn { padding-left: 1.2rem; margin: 0 0 1.1rem; }
+  ul.learn li { margin-bottom: .5rem; }
+  ul.learn li::marker { color: var(--accent); }
+
+  footer { margin: 5rem 0 3rem; padding-top: 1.5rem; border-top: 1px solid var(--line); display: flex; justify-content: space-between; font-size: .85rem; }
+  footer a { text-decoration: none; }
+  /* Halo qui suit la souris (même effet que l’accueil) */
+  .spotlight {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(380px circle at calc(var(--x, 50%) - 90px) calc(var(--y, -20%) + 40px), rgba(255, 79, 163, .10), transparent 60%),  /* rose */
+      radial-gradient(380px circle at calc(var(--x, 50%) + 90px) calc(var(--y, -20%) - 40px), rgba(59, 158, 255, .10), transparent 60%),  /* bleu */
+      radial-gradient(520px circle at var(--x, 50%) var(--y, -20%), rgba(168, 85, 255, .11), transparent 60%);                            /* violet */
+  }
+  .wrap { position: relative; z-index: 1; }
+  @media (max-width: 760px) { .spotlight { display: none; } }
+</style>
+</head>
+<body>
+<div class="spotlight" aria-hidden="true"></div>
+<div class="wrap">
+
+  <a href="../index.html#labs" class="back">← Retour au carnet de bord</a>
+
+  <header>
+    <h1>Anatomie d’une requête HTTP</h1>
+    <dl class="infos">
+      <div><dt>Date</dt><dd>Octobre 2026</dd></div>
+      <div><dt>Contexte</dt><dd>Exercice de cours, Guardia</dd></div>
+      <div><dt>Outils</dt><dd>Burp Suite</dd></div>
+      <div><dt>Thème</dt><dd>Sécurité web</dd></div>
+    </dl>
+  </header>
+
+  <!-- 1. CONTEXTE : quel est l’objectif, sur quelle cible -->
+  <h2>Objectif</h2>
+  <p>Explique en deux ou trois phrases ce que demandait l’exercice et sur quelle cible tu travaillais (ici, une application locale).</p>
+
+  <!-- 2. MISE EN PLACE : configuration des outils -->
+  <h2>Mise en place</h2>
+  <p>Décris comment tu as configuré Burp Suite : le proxy, le navigateur, l’interception.</p>
+  <figure>
+    <div class="placeholder">Capture d’écran ici<br><code>&lt;img src="img/burp-proxy.png" alt="…"&gt;</code></div>
+    <figcaption>Légende de la capture.</figcaption>
+  </figure>
+
+  <!-- 3. DÉMARCHE : le cœur du lab, étape par étape -->
+  <h2>Démarche</h2>
+  <p>Raconte ce que tu as observé, étape par étape. Tu peux coller les requêtes interceptées dans un bloc comme celui-ci :</p>
+<pre><code><span class="k">GET</span> /exemple HTTP/1.1
+<span class="k">Host:</span> 127.0.0.1:8000
+<span class="k">User-Agent:</span> Mozilla/5.0 …
+<span class="k">Cookie:</span> session=…</code></pre>
+  <p>Puis explique ce que signifie chaque partie : la méthode, le chemin, les en-têtes, les cookies.</p>
+<pre><code>HTTP/1.1 <span class="s">200 OK</span>
+<span class="k">Content-Type:</span> text/html; charset=utf-8
+<span class="k">Set-Cookie:</span> …</code></pre>
+
+  <div class="note"><strong>À noter :</strong> utilise ce type d’encadré pour mettre en avant une observation importante, une erreur que tu as faite ou une astuce.</div>
+
+  <!-- 4. RÉSULTAT -->
+  <h2>Résultat</h2>
+  <p>Ce que tu as obtenu ou compris à la fin de l’exercice.</p>
+
+  <!-- 5. CE QUE J’AI APPRIS : très apprécié par les recruteurs -->
+  <h2>Ce que j’ai appris</h2>
+  <ul class="learn">
+    <li>Premier apprentissage.</li>
+    <li>Deuxième apprentissage.</li>
+    <li>Ce que je ferais différemment la prochaine fois.</li>
+  </ul>
+
+  <footer>
+    <a href="../index.html#labs">← Carnet de bord</a>
+    <span style="color: var(--muted)">Nada Shaala</span>
+  </footer>
+</div>
+<script>
+  if (window.matchMedia('(pointer: fine)').matches) {
+    const spot = document.querySelector('.spotlight');
+    window.addEventListener('pointermove', e => {
+      spot.style.setProperty('--x', e.clientX + 'px');
+      spot.style.setProperty('--y', e.clientY + 'px');
+    });
+  }
+</script>
+</body>
+</html>
