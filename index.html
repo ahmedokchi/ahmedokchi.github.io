@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nada Shaala · Cybersécurité</title>
+<meta name="description" content="Portfolio de Nada Shaala, étudiante en cybersécurité à Guardia Cybersecurity School.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/js/all.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ===== Couleurs : modifie ici pour changer tout le thème ===== */
+  :root {
+    --bg: #000000;        /* noir pur */
+    --surface: #0B0B0D;
+    --ink: #F4F2F7;       /* texte principal, très contrasté */
+    --muted: #A29DAB;     /* texte secondaire, reste lisible sur le noir */
+    --line: #26252B;
+    --accent: #A855FF;    /* violet électrique */
+    --ok: #5FE3A5;        /* vert terminal */
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 400 1rem/1.7 "IBM Plex Sans", system-ui, sans-serif;
+    padding: env(safe-area-inset-top, 0) 0 env(safe-area-inset-bottom, 0);
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--accent); color: #000; }
+  a { color: var(--accent); text-underline-offset: 3px; }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+
+  /* Halo rose qui suit la souris */
+  .spotlight {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(380px circle at calc(var(--x, 50%) - 90px) calc(var(--y, -20%) + 40px), rgba(255, 79, 163, .10), transparent 60%),  /* rose */
+      radial-gradient(380px circle at calc(var(--x, 50%) + 90px) calc(var(--y, -20%) - 40px), rgba(59, 158, 255, .10), transparent 60%),  /* bleu */
+      radial-gradient(520px circle at var(--x, 50%) var(--y, -20%), rgba(168, 85, 255, .11), transparent 60%);                            /* violet */
+    transition: opacity .4s;
+  }
+  .wrap { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 0 1.5rem; }
+
+  /* ===== Navigation ===== */
+  nav { display: flex; justify-content: flex-end; padding: 1.75rem 0; }
+  nav ul { display: flex; gap: 2rem; list-style: none; margin: 0; padding: 0; }
+  nav ul a { color: var(--muted); text-decoration: none; font-size: .9rem; transition: color .2s; }
+  nav ul a:hover { color: var(--accent); }
+
+  /* ===== Hero ===== */
+  .hero { display: flex; flex-direction: column; justify-content: center; min-height: 72vh; padding: 2rem 0 5rem; }
+  h1, h2, h3 { font-family: "Chakra Petch", "IBM Plex Sans", sans-serif; font-weight: 600; line-height: 1.1; margin: 0; letter-spacing: -.01em; }
+  h1 { font-size: clamp(3rem, 9vw, 6rem); }
+  .cursor { display: inline-block; width: .1em; height: .85em; border-radius: 2px; background: var(--accent); margin-left: .08em; box-shadow: 0 0 14px var(--accent); }
+  .hero p { color: var(--muted); max-width: 44ch; margin: 1.5rem 0 2.25rem; font-size: 1.1rem; }
+  .btns { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .btn { display: inline-block; padding: .75rem 1.25rem; border-radius: 10px; text-decoration: none; font-weight: 500; font-size: .9rem; border: 1px solid var(--line); color: var(--ink); transition: background .25s, color .25s, border-color .25s, box-shadow .25s; }
+  .btn:hover { border-color: var(--ink); }
+  .btn-main { border-color: var(--accent); color: var(--accent); }
+  .btn-main:hover { background: var(--accent); color: #000; border-color: var(--accent); box-shadow: 0 0 28px rgba(168, 85, 255, .55); }
+
+
+  /* ===== Sections ===== */
+  section { padding: 5rem 0; }
+  h2 { font-size: 1.9rem; margin-bottom: 2.25rem; }
+  h2::after { content: ""; display: block; width: 28px; height: 2px; margin-top: .9rem; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+
+  .about p { margin: 0 0 1rem; max-width: 62ch; }
+
+  /* Frise chronologique */
+  .frise { list-style: none; margin: 3rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); position: relative; }
+  .frise::before { content: ""; position: absolute; top: 5px; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--line), var(--accent)); }
+  .frise li { position: relative; padding: 1.75rem 1.5rem 0 0; }
+  .frise li::before { content: ""; position: absolute; top: 0; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--bg); border: 2px solid var(--muted); }
+  .frise li.now::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 12px var(--accent); }
+  .frise .when { font-family: "JetBrains Mono", monospace; font-size: .78rem; color: var(--muted); display: block; margin-bottom: .3rem; }
+  .frise li.now .when { color: var(--accent); }
+  .frise strong { font-weight: 500; display: block; }
+  .frise .where { color: var(--muted); font-size: .92rem; }
+
+  /* Write-ups */
+  .writeups { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
+  .writeups li { border-bottom: 1px solid var(--line); }
+  .writeups a { display: flex; justify-content: space-between; align-items: baseline; gap: 1.5rem; padding: 1.4rem 0; text-decoration: none; color: var(--ink); transition: padding .3s; }
+  .writeups a:hover { padding-left: .75rem; }
+  .writeups a:hover h3 { color: var(--accent); }
+  .writeups h3 { font-size: 1.15rem; font-weight: 500; transition: color .2s; }
+  .writeups p { margin: .25rem 0 0; color: var(--muted); font-size: .92rem; }
+  .meta { font-family: "JetBrains Mono", monospace; font-size: .75rem; color: var(--muted); white-space: nowrap; }
+  .soon { opacity: .4; pointer-events: none; }
+
+  /* Projets : bordure lumineuse qui suit la souris */
+  .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+  .project { position: relative; border-radius: 14px; padding: 1.6rem; background: var(--surface); border: 1px solid var(--line); display: flex; flex-direction: column; gap: .6rem; overflow: hidden; }
+  .project::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; background: radial-gradient(260px circle at var(--mx, -100px) var(--my, -100px), var(--accent), transparent 70%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+  .project h3 { font-size: 1.1rem; font-weight: 500; }
+  .project p { margin: 0; color: var(--muted); font-size: .92rem; flex: 1; }
+  .project > a { font-size: .88rem; text-decoration: none; }
+  .project > a:hover { text-decoration: underline; }
+
+  /* Compétences : lignes simples */
+  .skills { margin: 0; }
+  .skills div { display: grid; grid-template-columns: 200px 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--line); }
+  .skills div:first-child { border-top: 1px solid var(--line); }
+  .skills dt { color: var(--muted); }
+  .skills dd { margin: 0; }
+
+  .contact p { color: var(--muted); max-width: 46ch; margin: 0 0 1.75rem; }
+  /* Icônes de contact */
+  .socials { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .social { display: inline-flex; align-items: center; gap: .7rem; padding: .8rem 1.2rem; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); text-decoration: none; font-size: .92rem; transition: border-color .25s, box-shadow .25s, transform .25s; }
+  .social i, .social svg { font-size: 1.35rem; width: 1.35rem; height: 1.35rem; color: var(--accent); transition: filter .25s; }
+  .social:hover { border-color: var(--accent); box-shadow: 0 0 24px rgba(168, 85, 255, .35); transform: translateY(-2px); }
+  .social:hover i, .social:hover svg { filter: drop-shadow(0 0 6px var(--accent)); }
+
+  footer { padding: 3rem 0; color: var(--muted); font-size: .78rem; font-family: "JetBrains Mono", monospace; }
+
+  /* ===== Animations (désactivées si l’utilisatrice préfère moins de mouvement) ===== */
+  @media (prefers-reduced-motion: no-preference) {
+    .cursor { animation: blink 1.1s steps(1) infinite; }
+    .reveal { opacity: 0; transform: translateY(14px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.on { opacity: 1; transform: none; }
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* ===== Mobile ===== */
+  @media (max-width: 760px) {
+    nav ul { gap: 1.25rem; }
+    .frise { grid-template-columns: 1fr; margin-top: 2.5rem; }
+    .frise::before { top: 0; bottom: 0; left: 5px; right: auto; width: 1px; height: auto; background: linear-gradient(180deg, var(--line), var(--accent)); }
+    .frise li { padding: 0 0 1.75rem 2rem; }
+    .hero { min-height: 0; padding: 3rem 0 3.5rem; }
+    .writeups a { flex-direction: column; gap: .4rem; }
+    .skills div { grid-template-columns: 1fr; gap: .25rem; }
+    .spotlight { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="spotlight" aria-hidden="true"></div>
+<div class="wrap">
+
+  <nav>
+    <ul>
+      <li><a href="#about">À propos</a></li>
+      <li><a href="#labs">Labs</a></li>
+      <li><a href="#projets">Projets</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <div>
+      <h1>Nada Shaala<span class="cursor" aria-hidden="true"></span></h1>
+      <p>Étudiante en cybersécurité à Guardia. Je cherche un stage ou une alternance en sécurité offensive et applicative.</p>
+      <div class="btns">
+        <a href="#labs" class="btn btn-main">Voir mes labs</a>
+        <a href="cv-nada-shaala.pdf" class="btn">Télécharger mon CV</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== À PROPOS ===== -->
+  <section id="about" class="reveal">
+    <h2>À propos</h2>
+    <div class="about">
+      <p>Depuis peu j'ai découvert la cybersécurité : après deux années de BUT Informatique, j’ai rejoint Guardia pour me spécialiser en cyber. Trés vite j'ai été passioné par ce vaste domaine et c'est ici que je partage mes découvertes. </p>
+    </div>
+    <ol class="frise">
+      <li><span class="when">2023 – 2025</span><strong>BUT Informatique</strong><span class="where">École Hexagone, Versailles</span></li>
+      <li class="now"><span class="when">2026 – aujourd’hui</span><strong>Guardia Cybersecurity School</strong><span class="where">La Défense</span></li>
+    </ol>
+  </section>
+
+  <!-- ===== CARNET DE BORD (menu : Labs) ===== -->
+  <section id="labs" class="reveal">
+    <h2>Carnet de bord</h2>
+    <ul class="writeups">
+      <li>
+        <a href="labs/anatomie-requete-http.html">
+          <div>
+            <h3>Anatomie d’une requête HTTP</h3>
+            <p>Intercepter et décortiquer une requête avec Burp Suite sur une cible locale.</p>
+          </div>
+          <span class="meta">Burp Suite / HTTP</span>
+        </a>
+      </li>
+      <li class="soon">
+        <a href="#" aria-disabled="true">
+          <div>
+            <h3>Titre du prochain lab</h3>
+            <p>Une phrase pour résumer le challenge ou la machine.</p>
+          </div>
+          <span class="meta">À venir</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ===== PROJETS ===== -->
+  <section id="projets" class="reveal">
+    <h2>Projets</h2>
+    <div class="projects">
+      <article class="project">
+        <span class="meta">Python / Réseau</span>
+        <h3>Nom du projet</h3>
+        <p>Ce que fait le projet, ce que tu as appris, et l’angle sécurité.</p>
+        <a href="#">Voir sur GitHub</a>
+      </article>
+      <article class="project">
+        <span class="meta">VirtualBox / Kali</span>
+        <h3>Homelab</h3>
+        <p>Ton environnement de test : machines, outils, objectifs.</p>
+        <a href="#">Voir le détail</a>
+      </article>
+      <article class="project">
+        <span class="meta">Web</span>
+        <h3>Projet de dev</h3>
+        <p>Un projet du BUT, présenté avec ce que tu y as sécurisé.</p>
+        <a href="#">Voir sur GitHub</a>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== COMPÉTENCES ===== -->
+  <section id="competences" class="reveal">
+    <h2>Compétences</h2>
+    <dl class="skills">
+      <div><dt>Sécurité</dt><dd>Burp Suite, HTTP, à compléter</dd></div>
+      <div><dt>Développement</dt><dd>À compléter</dd></div>
+      <div><dt>Systèmes et réseau</dt><dd>Linux, à compléter</dd></div>
+    </dl>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section id="contact" class="contact reveal">
+    <h2>Contact</h2>
+    <p>N'hésite pas à me contacter si tu as une question ou une offre à me proposer. </p>
+    <div class="socials">
+      <a href="mailto:nadashaala@gmail.com" class="social"><i class="fa-regular fa-envelope" aria-hidden="true"></i>E-mail</a>
+      <a href="https://www.linkedin.com/in/nada-shaala/" class="social" target="_blank" rel="noopener"><i class="fa-brands fa-linkedin" aria-hidden="true"></i>LinkedIn</a>
+      <a href="https://github.com/ahmedokchi" class="social" target="_blank" rel="noopener"><i class="fa-brands fa-github" aria-hidden="true"></i>GitHub</a>
+    </div>
+  </section>
+
+  <footer>© Version 1 - Nada Shaala</footer>
+</div>
+
+<script>
+
+  // Apparaition au défilement
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('on');
+      io.unobserve(e.target);
+    });
+  }, { threshold: .2 });
+  document.querySelectorAll('.reveal').forEach(s => io.observe(s));
+
+  // Halo qui suit la souris + bordure lumineuse des cartes projets
+  if (window.matchMedia('(pointer: fine)').matches) {
+    const spot = document.querySelector('.spotlight');
+    window.addEventListener('pointermove', e => {
+      spot.style.setProperty('--x', e.clientX + 'px');
+      spot.style.setProperty('--y', e.clientY + 'px');
+    });
+    document.querySelectorAll('.project').forEach(card => {
+      card.addEventListener('pointermove', e => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.setProperty('--mx', '-300px');
+        card.style.setProperty('--my', '-300px');
+      });
+    });
+  }
+</script>
+</body>
+</html>
